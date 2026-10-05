@@ -46,13 +46,16 @@ function setLang(lang) {
 document.querySelectorAll(".lang button").forEach((b) => b.addEventListener("click", () => setLang(b.dataset.lang)));
 setLang(pickLang());
 
-// QR code per invitation (generated later): ?qr=<image url> or assets/qr/<id>.png via ?id=<id>
-const qrSrc = params.get("qr") || (params.get("id") ? `assets/qr/${encodeURIComponent(params.get("id"))}.png` : "");
-if (qrSrc) {
-  const img = new Image();
-  img.alt = "Your personal QR code";
-  img.onload = () => document.getElementById("qrBox").replaceChildren(img);
-  img.src = qrSrc;
+// Personal check-in QR: encodes only the guest ID (no name), scanned at the entrance by the check-in app (/checkin/)
+const guestId = (params.get("id") || "").toUpperCase();
+if (/^G\d{2,3}$/.test(guestId) && window.qrcode) {
+  const qr = qrcode(0, "M");
+  qr.addData(`KA26:${guestId}`);
+  qr.make();
+  const box = document.getElementById("qrBox");
+  box.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 2, scalable: true });
+  box.classList.add("has-qr");
+  box.setAttribute("aria-label", `Check-in QR code ${guestId}`);
 }
 
 // ===== The flip-book (own lightweight page-turn: CSS 3D transform only) =====

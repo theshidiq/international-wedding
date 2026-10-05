@@ -1,0 +1,10 @@
+{
+  "name": "K&A Wedding Check-in",
+  "short_name": "K&A Check-in",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0b1a44",
+  "theme_color": "#0b1a44"
+}
