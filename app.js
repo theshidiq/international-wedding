@@ -55,66 +55,104 @@ if (qrSrc) {
   img.src = qrSrc;
 }
 
-// ===== The flip-book =====
+// ===== The flip-book (own lightweight page-turn: CSS 3D transform only) =====
 const bookEl = document.getElementById("book");
 const pages = [...document.querySelectorAll("#book .page")];
 const RATIO = 419 / 297; // passport page proportions from the Canva design
 const pageNo = document.getElementById("pageNo");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
-let flip = null;
+let idx = 0;
+let busy = false;
 let started = false;
-let builtW = 0;
+let ready = false;
 
-// Builds the book once the window has a real size (a tab opened in the background can start at 0×0).
-function buildBook() {
-  const availW = innerWidth - 24, availH = innerHeight - 88;
-  if (availW < 200 || availH < 280) return false;
-  let pageW = Math.min(480, availW, availH / RATIO);
-  const spread = innerWidth >= 820 && availW >= pageW * 2 + 40; // desktop: open passport, two pages side by side
-  if (spread) pageW = Math.min(480, availW / 2, availH / RATIO);
-  pageW = Math.floor(pageW);
-  const pageH = Math.floor(pageW * RATIO);
-  bookEl.style.width = `${spread ? pageW * 2 : pageW}px`;
-  bookEl.style.height = `${pageH}px`;
-
-  flip = new St.PageFlip(bookEl, {
-    width: pageW, height: pageH, size: "fixed",
-    showCover: true, usePortrait: true, mobileScrollSupport: false,
-    drawShadow: !lowEnd, maxShadowOpacity: 0.3, flippingTime: lowEnd ? 550 : 700,
-  });
-  flip.loadFromHTML(pages);
-  flip.on("flip", (e) => showPage(e.data));
-  builtW = innerWidth;
-  showPage(0); // every link always opens on the front cover
+// Size the book to the screen; re-run on rotate/resize (a background tab can start at 0×0).
+function sizeBook() {
+  const availW = innerWidth - 24, availH = innerHeight - 140; // room for the language switch + page buttons
+  if (availW < 200 || availH < 260) return false;
+  const pageW = Math.floor(Math.min(480, availW, availH / RATIO));
+  bookEl.style.width = `${pageW}px`;
+  bookEl.style.height = `${Math.floor(pageW * RATIO)}px`;
   return true;
 }
 
+// Only the open page and the one underneath it are rendered; everything else is hidden.
+function layout() {
+  pages.forEach((p, n) => {
+    p.style.zIndex = String(pages.length - n);
+    p.classList.toggle("turned", n < idx);
+    p.classList.toggle("hidden", n < idx || n > idx + 1);
+  });
+}
+
+function go(n) {
+  n = Math.max(0, Math.min(pages.length - 1, n));
+  if (!ready || busy || n === idx) return;
+  busy = true;
+  const forward = n > idx;
+  const moving = forward ? pages[idx] : pages[n]; // the sheet that swings
+  pages[n].classList.remove("hidden");
+  if (forward && pages[n + 1]) pages[n + 1].classList.remove("hidden");
+  moving.classList.add("turning");
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    moving.classList.toggle("turned", forward);
+  }));
+  const done = () => {
+    moving.classList.remove("turning");
+    idx = n;
+    layout();
+    showPage(idx);
+    busy = false;
+  };
+  let finished = false;
+  const finish = () => { if (!finished) { finished = true; done(); } };
+  moving.addEventListener("transitionend", function te(e) {
+    if (e.target === moving && e.propertyName === "transform") { moving.removeEventListener("transitionend", te); finish(); }
+  });
+  setTimeout(finish, (lowEnd ? 450 : 700) + 150); // safety net if transitionend never fires
+}
+const next = () => go(idx + 1);
+const prev = () => go(idx - 1);
+
 function showPage(i) {
-  // run the animations on the page(s) now visible
-  const visible = flip.getOrientation() === "landscape" && i > 0 ? [i, i + 1] : [i];
-  // "in" = page was shown (one-time entrance animations); "on" = page is visible now (looping animations run only here)
-  // (the flip library makes copies of pages while turning them, so clear "on" everywhere first)
-  document.querySelectorAll("#book .page.on").forEach((p) => p.classList.remove("on"));
-  visible.forEach((n) => pages[n]?.classList.add("on"));
-  visible.forEach((n) => pages[n]?.classList.add("in"));
-  if (mapSvg) { if (mapSvg.closest(".page").classList.contains("on") && !lowEnd) mapSvg.unpauseAnimations(); else mapSvg.pauseAnimations(); }
+  // "in" = page was shown (one-time entrance animations); "on" = open now (looping animations run only here)
+  pages.forEach((p, n) => p.classList.toggle("on", n === i));
+  pages[i].classList.add("in");
+  if (mapSvg) { if (pages[i].contains(mapSvg) && !lowEnd) mapSvg.unpauseAnimations(); else mapSvg.pauseAnimations(); }
   pageNo.textContent = `${i + 1} / ${pages.length}`;
   prevBtn.disabled = i === 0;
   nextBtn.disabled = i >= pages.length - 1;
   if (i > 0 && !started) { started = true; startMusic(); }
 }
 
-prevBtn.addEventListener("click", () => flip?.flipPrev());
-nextBtn.addEventListener("click", () => flip?.flipNext());
+prevBtn.addEventListener("click", prev);
+nextBtn.addEventListener("click", next);
 addEventListener("keydown", (e) => {
-  if (e.key === "ArrowRight") flip?.flipNext();
-  if (e.key === "ArrowLeft") flip?.flipPrev();
+  if (e.key === "ArrowRight") next();
+  if (e.key === "ArrowLeft") prev();
 });
-addEventListener("resize", () => {
-  if (!flip) buildBook(); // window just got its size
-  else if (Math.abs(innerWidth - builtW) > 120) location.reload(); // rotated / resized a lot: rebuild at the new size
+
+// Swipe left/right, or tap the right/left side of the page.
+let sx = 0, sy = 0, st = 0;
+bookEl.addEventListener("pointerdown", (e) => { sx = e.clientX; sy = e.clientY; st = Date.now(); });
+bookEl.addEventListener("pointerup", (e) => {
+  const dx = e.clientX - sx, dy = e.clientY - sy;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) return dx < 0 ? next() : prev();
+  if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && Date.now() - st < 500 && !e.target.closest("a, button")) {
+    const r = bookEl.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width;
+    if (x > 0.6) next(); else if (x < 0.4) prev();
+  }
 });
+
+addEventListener("resize", () => { if (sizeBook() && !ready) start(); });
+
+function start() {
+  ready = true;
+  layout();
+  showPage(0); // every link always opens on the front cover
+}
 
 // ===== Music (starts on the first page turn) =====
 const music = document.getElementById("music");
@@ -168,5 +206,5 @@ document.getElementById("calBtn").addEventListener("click", () => {
   a.click();
 });
 
-// Build the book last, after everything it may call (music, effects) is defined.
-if (!buildBook()) requestAnimationFrame(() => { if (!flip) buildBook(); });
+// Start the book last, after everything it may call (music, effects) is defined.
+if (sizeBook()) start(); else requestAnimationFrame(() => { if (!ready && sizeBook()) start(); });

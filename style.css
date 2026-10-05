@@ -19,9 +19,25 @@ img { max-width: 100%; display: block; }
 .script { font-family: var(--script); font-weight: 400; }
 
 /* ---------- stage + book ---------- */
-.stage { position: fixed; inset: 0 0 64px; display: grid; place-items: center; }
-.book { margin: 0 auto; }
-.page { background: var(--paper); overflow: hidden; }
+.stage { position: fixed; inset: 60px 0 68px; display: grid; place-items: center; touch-action: pan-y; }
+.book { position: relative; margin: 0 auto; perspective: 2200px; user-select: none; -webkit-user-select: none; }
+.page {
+  position: absolute; inset: 0; background: var(--paper); overflow: hidden;
+  transform-origin: left center; transform: rotateY(0deg);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  transition: transform .7s cubic-bezier(.45,.05,.25,1);
+  box-shadow: 0 1.5vh 4vh rgba(0,0,0,.35);
+}
+.page.turned { transform: rotateY(-180deg); }
+.page.hidden { visibility: hidden; }
+.page::after { /* page-turn shading */
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0; z-index: 3;
+  background: linear-gradient(90deg, rgba(0,0,0,.25), rgba(0,0,0,0) 40%, rgba(255,255,255,.15));
+  transition: opacity .35s ease;
+}
+.page.turning::after { opacity: 1; }
+.lite .page { transition-duration: .45s; box-shadow: 0 1vh 2vh rgba(0,0,0,.3); }
+.lite .page::after { display: none; }
 .pg {
   position: absolute; inset: 0; container-type: inline-size;
   padding: 8% 7%; display: flex; flex-direction: column; gap: 2cqw;
