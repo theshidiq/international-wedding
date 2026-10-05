@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Wedding Passport — Kamal &amp; Airiam</title>
+  <meta name="description" content="You're invited to the Nikah of Kamal & Airiam · Thursday, 10 December 2026 · Horison Tasikmalaya">
+  <meta property="og:title" content="Wedding Passport — Kamal & Airiam">
+  <meta property="og:description" content="Thursday, 10 December 2026 · Horison Tasikmalaya">
+  <meta property="og:image" content="assets/couple.jpg">
+  <meta name="theme-color" content="#0b1a44">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Alex+Brush&family=Cinzel:wght@400;700&family=Shippori+Mincho:wght@400;700&family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="lang" role="group" aria-label="Language">
+  <button data-lang="en" aria-pressed="false">EN</button>
+  <button data-lang="id" aria-pressed="false">ID</button>
+  <button data-lang="ja" aria-pressed="false">日本語</button>
+</div>
+
+<div class="petals" aria-hidden="true"></div>
+
+<div class="stage">
+  <div id="book" class="book">
+
+    <!-- 0 · Front cover (hard) -->
+    <section class="page cover" data-density="hard">
+      <div class="pg">
+        <p class="cover-title" data-i18n-html="coverTitle">WEDDING<br>PASSPORT</p>
+        <img class="cover-mono" src="assets/monogram.png" alt="K&amp;A monogram">
+        <p class="cover-names">Kamal&amp;Airiam</p>
+        <p class="cover-date" data-fill="dateShort"></p>
+        <div class="cover-guest" id="coverGuest" hidden>
+          <span data-i18n="holder">Passport holder</span>
+          <strong data-guest></strong>
+        </div>
+        <p class="hint" data-i18n="hint">Tap or swipe to open ➜</p>
+      </div>
+    </section>
+
+    <!-- 1 · Quote -->
+    <section class="page page-pink">
+      <div class="pg center">
+        <img class="heart-line dark" src="assets/heart-line.png" alt="" aria-hidden="true">
+        <p class="quote anim" data-i18n="quote">“He brought their hearts together.”</p>
+        <p class="quote-src anim d1" data-i18n="quoteSrc">— Surah Al-Anfal (8:63)</p>
+      </div>
+    </section>
+
+    <!-- 2 · Invitation + map -->
+    <section class="page">
+      <div class="pg center">
+        <p class="lead anim" data-i18n="lead1">Under the witness of Allah and our beloved families,</p>
+        <p class="we anim d1" data-i18n="we">We</p>
+        <h1 class="names script"><span class="ink">Kamal</span> <span class="amp">&amp;</span> <span class="ink">Airiam</span></h1>
+        <p class="lead anim d2" data-i18n-html="lead2">Joyously invite you to our Nikah<br>and share in the blessings of our union.</p>
+        <div class="map-wrap anim d2">
+          <img src="assets/worldmap.png" alt="" class="map">
+          <svg class="route" viewBox="0 0 1176 580" aria-hidden="true">
+            <path id="flight" class="arc" d="M952 318 Q 1010 380 905 393"/>
+            <circle class="pin" cx="952" cy="318" r="12"/>
+            <circle class="pin pulse" cx="905" cy="393" r="12"/>
+            <text class="plane" font-size="56" dy="18" text-anchor="middle">✈
+              <animateMotion dur="3.2s" repeatCount="indefinite" rotate="auto"><mpath href="#flight"/></animateMotion>
+            </text>
+          </svg>
+          <p class="map-caption" data-i18n="mapCaption">Philippines ✈ Indonesia</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · Photo -->
+    <section class="page page-dark">
+      <div class="pg center">
+        <figure class="photo-frame anim">
+          <img src="assets/couple.jpg" alt="Kamal and Airiam">
+          <figcaption class="script" data-i18n="seeYou">See you there!</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- 4 · Data page -->
+    <section class="page page-data">
+      <div class="pg">
+        <h2 class="anim" data-i18n="journey">Our Journey Begins Here</h2>
+        <div class="data-grid anim d1">
+          <div class="data-photo">
+            <p class="label" data-i18n="weddingPassport">Wedding Passport</p>
+            <img src="assets/passport-photo.jpg" alt="Passport photo of Kamal and Airiam">
+          </div>
+          <dl class="data">
+            <div><dt data-i18n="passportNo">Passport No.</dt><dd data-fill="passportNo"></dd></div>
+            <div><dt data-i18n="docType">Document Type / Code</dt><dd data-i18n="docTypeVal">Halal Union / nikah2026</dd></div>
+            <div><dt data-i18n="groom">Groom</dt><dd>Kamal Abdul Shidiq</dd></div>
+            <div><dt data-i18n="bride">Bride</dt><dd>Mhar Airiam Anele Velarde</dd></div>
+            <div><dt data-i18n="issue">Date of Issue</dt><dd data-fill="dateShort"></dd></div>
+            <div><dt data-i18n="expiry">Date of Expiration</dt><dd data-i18n="noExpiry">No Expiration</dd></div>
+            <div><dt data-i18n="nationality">Nationality</dt><dd data-i18n="nationalityVal">Indonesian × Filipino</dd></div>
+            <div><dt data-i18n="authority">Issuing Authority</dt><dd data-i18n="decreed">Decreed by Allah</dd></div>
+          </dl>
+        </div>
+        <div class="stamp" aria-hidden="true"><span data-i18n="approved">APPROVED</span><small data-i18n="decreed">Decreed by Allah</small></div>
+        <p class="presence anim d2"><span data-i18n="presence1" class="p1">Your presence completes our special day.</span><br><span data-i18n="presence2">Come and celebrate with us!</span></p>
+        <div class="mrz" aria-hidden="true">P&lt;IDNPHL&lt;KAMAL&lt;&lt;AIRIAM&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;<br><span data-fill="passportNo"></span>&lt;HALAL&lt;UNION&lt;&lt;&lt;&lt;&lt;</div>
+      </div>
+    </section>
+
+    <!-- 5 · Attire -->
+    <section class="page">
+      <div class="pg center">
+        <h2 class="script big anim" data-i18n="attire">Attire Color Guide</h2>
+        <p class="sub anim" data-i18n="attireSub">Show us your favorite outfit in our chosen colors!</p>
+        <div class="chips">
+          <div class="chip" style="--c:#3b2418"><i></i><span data-i18n="c1">Rich dark brown</span></div>
+          <div class="chip" style="--c:#7a4a2a"><i></i><span data-i18n="c2">Walnut</span></div>
+          <div class="chip" style="--c:#9aa07a"><i></i><span data-i18n="c3">Muted olive</span></div>
+          <div class="chip" style="--c:#1e4a2b"><i></i><span data-i18n="c4">Deep green</span></div>
+        </div>
+        <img class="attire anim d2" src="assets/attire.png" alt="Outfit examples in brown, walnut, olive and deep green">
+      </div>
+    </section>
+
+    <!-- 6 · Boarding pass (personal: guest, seat, venue, QR, countdown) -->
+    <section class="page page-dark">
+      <div class="pg center pass-page">
+        <article class="ticket anim">
+          <div class="ticket-side"><span>WEDDING PASS</span></div>
+          <div class="ticket-main">
+            <p class="ticket-class" data-i18n="firstClass">FIRST CLASS TICKET</p>
+            <p class="names script small"><span>Kamal</span> &amp; <span>Airiam</span></p>
+            <p class="passenger"><span class="k" data-i18n="passenger">Guest</span><strong data-guest data-i18n="honored">Honored Guest</strong></p>
+            <div class="legs">
+              <div><span class="k" data-i18n="from">From</span><strong>ISL</strong><small>(INSHALLAH)</small></div>
+              <div class="fly" aria-hidden="true"><i></i><b>✈</b></div>
+              <div><span class="k" data-i18n="to">To</span><strong>ALH</strong><small>(ALHAMDULILLAH)</small></div>
+            </div>
+            <div class="fields">
+              <div><span class="k" data-i18n="date">Date</span><strong data-fill="dateTicket"></strong><small data-i18n="thursday">(THURSDAY)</small></div>
+              <div><span class="k" data-i18n="boarding">Boarding</span><strong data-i18n="time">9:00 AM</strong><small>(WIB · UTC+7)</small></div>
+              <div class="wide"><span class="k" data-i18n="venue">Venue</span><strong>HORISON TASIKMALAYA</strong><small data-i18n="address">Jl. Yudanegara No. 63, Tasikmalaya, West Java</small></div>
+              <div><span class="k" data-i18n="seat">Seat</span><strong id="seatText">ROW K, SEAT A</strong><small id="seatSub">(V.I.P)</small></div>
+              <div><span class="k" data-i18n="flight">Flight</span><strong>SURAH 30:21</strong><small data-i18n="flightSub">(He created for you mates from among yourselves.)</small></div>
+            </div>
+          </div>
+          <div class="ticket-stub">
+            <div class="qr" id="qrBox" aria-label="QR code"><span>QR CODE</span></div>
+            <div class="stub-info">
+              <p class="airline">K&amp;A AIRWAYS</p>
+              <p class="motto" data-i18n="motto">“A match made in Jannah.”</p>
+              <p class="boarding-in"><span class="k" data-i18n="boardingIn">Boarding in</span>
+                <b data-cd="d">0</b><span data-i18n="ud">d</span> <b data-cd="h">0</b><span data-i18n="uh">h</span> <b data-cd="m">0</b><span data-i18n="um">m</span> <b data-cd="s">0</b><span data-i18n="us">s</span></p>
+              <p class="scan" data-i18n="scan">Show this pass at the entrance</p>
+            </div>
+          </div>
+        </article>
+        <div class="actions anim d1">
+          <a class="mini-pass" id="mapsBtn" target="_blank" rel="noopener">
+            <span class="mp-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><path d="M12 21s-6.5-6.2-6.5-11.2a6.5 6.5 0 0 1 13 0C18.5 14.8 12 21 12 21z"/><circle cx="12" cy="9.8" r="2.4"/></svg>
+            </span>
+            <span class="mp-text"><b data-i18n="directions">DIRECTIONS</b><small data-i18n="openMaps">Open in Maps</small></span>
+          </a>
+          <button class="mini-pass" id="calBtn" type="button">
+            <span class="mp-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24"><rect x="4" y="5.5" width="16" height="14.5" rx="1.5"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4"/><path d="M9.5 15l1.8 1.8 3.4-3.6"/></svg>
+            </span>
+            <span class="mp-text"><b data-i18n="saveDate">SAVE THE DATE</b><small data-i18n="addCal">Add to calendar</small></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · Love note -->
+    <section class="page page-navy">
+      <div class="pg love">
+        <div class="love-row slide-l">
+          <img src="assets/airiam.jpg" alt="Airiam">
+          <span class="bubble">Mahal din kita.</span>
+        </div>
+        <img class="heart-line" src="assets/heart-line.png" alt="" aria-hidden="true">
+        <div class="love-row slide-r">
+          <span class="bubble">Aku cinta kamu.</span>
+          <img src="assets/kamal.jpg" alt="Kamal">
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · Back cover (hard) -->
+    <section class="page cover back" data-density="hard">
+      <div class="pg">
+        <img class="cover-mono" src="assets/monogram.png" alt="K&amp;A">
+        <p class="cover-names">Kamal&amp;Airiam</p>
+        <p class="cover-date" data-fill="dateShort"></p>
+        <p class="hint">K&amp;A AIRWAYS · <span data-i18n="motto">“A match made in Jannah.”</span></p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<nav class="controls" aria-label="Page navigation">
+  <button id="prevBtn" aria-label="Previous page">‹</button>
+  <span id="pageNo">1 / 9</span>
+  <button id="nextBtn" aria-label="Next page">›</button>
+</nav>
+
+<button class="music" id="musicBtn" hidden aria-label="Play or pause music">♪</button>
+<audio id="music" loop preload="none"></audio>
+
+<script src="https://cdn.jsdelivr.net/npm/page-flip@2.0.7/dist/js/page-flip.browser.js"></script>
+<script src="i18n.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
