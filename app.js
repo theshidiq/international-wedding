@@ -59,26 +59,38 @@ if (qrSrc) {
 const bookEl = document.getElementById("book");
 const pages = [...document.querySelectorAll("#book .page")];
 const RATIO = 419 / 297; // passport page proportions from the Canva design
-const availW = innerWidth - 24, availH = innerHeight - 88;
-let pageW = Math.min(480, availW, availH / RATIO);
-const spread = innerWidth >= 820 && availW >= pageW * 2 + 40; // desktop: open passport, two pages side by side
-if (spread) pageW = Math.min(480, availW / 2, availH / RATIO);
-pageW = Math.floor(pageW);
-const pageH = Math.floor(pageW * RATIO);
-bookEl.style.width = `${spread ? pageW * 2 : pageW}px`;
-bookEl.style.height = `${pageH}px`;
-
-const flip = new St.PageFlip(bookEl, {
-  width: pageW, height: pageH, size: "fixed",
-  showCover: true, usePortrait: true, mobileScrollSupport: false,
-  maxShadowOpacity: 0.45, flippingTime: 900,
-});
-flip.loadFromHTML(pages);
-
 const pageNo = document.getElementById("pageNo");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
+let flip = null;
 let started = false;
+let builtW = 0;
+
+// Builds the book once the window has a real size (a tab opened in the background can start at 0×0).
+function buildBook() {
+  const availW = innerWidth - 24, availH = innerHeight - 88;
+  if (availW < 200 || availH < 280) return false;
+  let pageW = Math.min(480, availW, availH / RATIO);
+  const spread = innerWidth >= 820 && availW >= pageW * 2 + 40; // desktop: open passport, two pages side by side
+  if (spread) pageW = Math.min(480, availW / 2, availH / RATIO);
+  pageW = Math.floor(pageW);
+  const pageH = Math.floor(pageW * RATIO);
+  bookEl.style.width = `${spread ? pageW * 2 : pageW}px`;
+  bookEl.style.height = `${pageH}px`;
+
+  flip = new St.PageFlip(bookEl, {
+    width: pageW, height: pageH, size: "fixed",
+    showCover: true, usePortrait: true, mobileScrollSupport: false,
+    maxShadowOpacity: 0.45, flippingTime: 900,
+  });
+  flip.loadFromHTML(pages);
+  flip.on("flip", (e) => showPage(e.data));
+  builtW = innerWidth;
+  const startAt = Number(params.get("page")) || 0; // ?page=N opens at that page
+  if (startAt > 0) flip.turnToPage(Math.min(startAt, pages.length - 1));
+  showPage(flip.getCurrentPageIndex());
+  return true;
+}
 
 function showPage(i) {
   // run the animations on the page(s) now visible
@@ -89,19 +101,16 @@ function showPage(i) {
   nextBtn.disabled = i >= pages.length - 1;
   if (i > 0 && !started) { started = true; startPetals(); startMusic(); }
 }
-flip.on("flip", (e) => showPage(e.data));
-showPage(0);
 
-prevBtn.addEventListener("click", () => flip.flipPrev());
-nextBtn.addEventListener("click", () => flip.flipNext());
+prevBtn.addEventListener("click", () => flip?.flipPrev());
+nextBtn.addEventListener("click", () => flip?.flipNext());
 addEventListener("keydown", (e) => {
-  if (e.key === "ArrowRight") flip.flipNext();
-  if (e.key === "ArrowLeft") flip.flipPrev();
+  if (e.key === "ArrowRight") flip?.flipNext();
+  if (e.key === "ArrowLeft") flip?.flipPrev();
 });
-// Page size is set once; rebuild if the phone is rotated or the window changes a lot.
-let lastW = innerWidth;
 addEventListener("resize", () => {
-  if (Math.abs(innerWidth - lastW) > 120) location.reload();
+  if (!flip) buildBook(); // window just got its size
+  else if (Math.abs(innerWidth - builtW) > 120) location.reload(); // rotated / resized a lot: rebuild at the new size
 });
 
 // ===== Music (starts on the first page turn) =====
@@ -166,5 +175,5 @@ document.getElementById("calBtn").addEventListener("click", () => {
   a.click();
 });
 
-// ===== ?page=N opens the book at that page (for checking the layout) =====
-if (params.has("page")) flip.turnToPage(Math.max(0, Number(params.get("page")) || 0)), showPage(flip.getCurrentPageIndex());
+// Build the book last, after everything it may call (petals, music) is defined.
+if (!buildBook()) requestAnimationFrame(() => { if (!flip) buildBook(); });
