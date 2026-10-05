@@ -86,9 +86,7 @@ function buildBook() {
   flip.loadFromHTML(pages);
   flip.on("flip", (e) => showPage(e.data));
   builtW = innerWidth;
-  const startAt = Number(params.get("page")) || 0; // ?page=N opens at that page
-  if (startAt > 0) flip.turnToPage(Math.min(startAt, pages.length - 1));
-  showPage(flip.getCurrentPageIndex());
+  showPage(0); // every link always opens on the front cover
   return true;
 }
 
