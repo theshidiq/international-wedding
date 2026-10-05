@@ -116,9 +116,8 @@ const next = () => go(idx + 1);
 const prev = () => go(idx - 1);
 
 function showPage(i) {
-  // "in" = page was shown (one-time entrance animations); "on" = open now (looping animations run only here)
+  // "on" = the open page (the small plane loops run only here)
   pages.forEach((p, n) => p.classList.toggle("on", n === i));
-  pages[i].classList.add("in");
   if (mapSvg) { if (pages[i].contains(mapSvg) && !lowEnd) mapSvg.unpauseAnimations(); else mapSvg.pauseAnimations(); }
   pageNo.textContent = `${i + 1} / ${pages.length}`;
   prevBtn.disabled = i === 0;
