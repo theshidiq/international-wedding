@@ -81,7 +81,7 @@ function buildBook() {
   flip = new St.PageFlip(bookEl, {
     width: pageW, height: pageH, size: "fixed",
     showCover: true, usePortrait: true, mobileScrollSupport: false,
-    maxShadowOpacity: 0.45, flippingTime: 900,
+    drawShadow: !lowEnd, maxShadowOpacity: 0.3, flippingTime: lowEnd ? 550 : 700,
   });
   flip.loadFromHTML(pages);
   flip.on("flip", (e) => showPage(e.data));
@@ -93,11 +93,16 @@ function buildBook() {
 function showPage(i) {
   // run the animations on the page(s) now visible
   const visible = flip.getOrientation() === "landscape" && i > 0 ? [i, i + 1] : [i];
+  // "in" = page was shown (one-time entrance animations); "on" = page is visible now (looping animations run only here)
+  // (the flip library makes copies of pages while turning them, so clear "on" everywhere first)
+  document.querySelectorAll("#book .page.on").forEach((p) => p.classList.remove("on"));
+  visible.forEach((n) => pages[n]?.classList.add("on"));
   visible.forEach((n) => pages[n]?.classList.add("in"));
+  if (mapSvg) { if (mapSvg.closest(".page").classList.contains("on") && !lowEnd) mapSvg.unpauseAnimations(); else mapSvg.pauseAnimations(); }
   pageNo.textContent = `${i + 1} / ${pages.length}`;
   prevBtn.disabled = i === 0;
   nextBtn.disabled = i >= pages.length - 1;
-  if (i > 0 && !started) { started = true; startPetals(); startMusic(); }
+  if (i > 0 && !started) { started = true; startMusic(); }
 }
 
 prevBtn.addEventListener("click", () => flip?.flipPrev());
@@ -126,21 +131,11 @@ musicBtn.addEventListener("click", () => {
   musicBtn.classList.toggle("off", music.paused);
 });
 
-// ===== Falling petals =====
+// ===== Performance: lighter effects on low-end phones or when "reduce motion" is on =====
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-function startPetals() {
-  if (reduceMotion) return;
-  const box = document.querySelector(".petals");
-  for (let i = 0; i < 14; i++) {
-    const p = document.createElement("i");
-    p.style.left = `${Math.random() * 100}%`;
-    p.style.animationDuration = `${9 + Math.random() * 8}s, ${3 + Math.random() * 3}s`;
-    p.style.animationDelay = `${Math.random() * 10}s, 0s`;
-    p.style.setProperty("--s", (0.6 + Math.random() * 0.7).toFixed(2));
-    box.append(p);
-  }
-}
-
+const lowEnd = reduceMotion || (navigator.deviceMemory || 8) <= 4 || (navigator.hardwareConcurrency || 8) <= 4;
+if (lowEnd) document.documentElement.classList.add("lite");
+const mapSvg = document.querySelector(".route");
 // ===== Countdown =====
 const startAt = new Date(CONFIG.start).getTime();
 function tick() {
@@ -173,5 +168,5 @@ document.getElementById("calBtn").addEventListener("click", () => {
   a.click();
 });
 
-// Build the book last, after everything it may call (petals, music) is defined.
+// Build the book last, after everything it may call (music, effects) is defined.
 if (!buildBook()) requestAnimationFrame(() => { if (!flip) buildBook(); });

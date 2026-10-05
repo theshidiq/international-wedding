@@ -52,14 +52,13 @@ img { max-width: 100%; display: block; }
 .cover { background: var(--pink); }
 .cover .pg { align-items: center; justify-content: center; text-align: center; gap: 3.5cqw; box-shadow: inset 4cqw 0 0 rgba(0,0,0,.04); }
 .cover-title { font: 700 8.5cqw/1.1 var(--serif); letter-spacing: .14em; margin: 0; }
-.cover-mono { width: 52%; animation: glow 3.5s ease-in-out infinite; }
+.cover-mono { width: 52%; }
 .cover-names { font: 700 7.6cqw var(--serif); margin: 0; }
 .cover-date { font-size: 5.6cqw; letter-spacing: .12em; margin: 0; }
 .cover-guest { font-size: 3.8cqw; color: var(--muted); display: grid; gap: .5cqw; }
 .cover-guest strong { font-size: 5.4cqw; color: var(--ink); }
 .hint { font-size: 3.6cqw; color: var(--muted); margin: 0; animation: nudge 1.8s ease-in-out infinite; }
 .back .hint { animation: none; font-family: var(--caps); }
-@keyframes glow { 50% { filter: drop-shadow(0 0 2.5cqw rgba(255,255,255,.95)); } }
 @keyframes nudge { 50% { transform: translateX(2cqw); } }
 
 /* ---------- 1 quote ---------- */
@@ -183,15 +182,7 @@ img { max-width: 100%; display: block; }
 .bubble { background: #fff; color: var(--ink); border-radius: 5cqw; padding: 2cqw 4cqw; font: italic 4.4cqw var(--serif); margin: 0 3cqw; white-space: nowrap; }
 .love .heart-line { filter: invert(1); width: 55%; }
 
-/* ---------- petals + music ---------- */
-.petals { position: fixed; inset: 0; pointer-events: none; z-index: 5; overflow: hidden; }
-.petals i {
-  position: absolute; top: -30px; width: calc(14px * var(--s)); height: calc(10px * var(--s));
-  background: #f7c6cc; border-radius: 80% 0 80% 0; opacity: .85;
-  animation-name: fall, sway; animation-iteration-count: infinite; animation-timing-function: linear, ease-in-out;
-}
-@keyframes fall { to { top: 105vh; transform: rotate(540deg); } }
-@keyframes sway { 50% { margin-left: 40px; } }
+/* ---------- music ---------- */
 .music { position: fixed; right: 14px; bottom: 14px; z-index: 7; width: 44px; height: 44px; border-radius: 50%; border: 0; background: #fff; color: var(--ink); font-size: 20px; animation: spin 4s linear infinite; }
 .music.off { animation: none; opacity: .6; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -250,7 +241,7 @@ img { max-width: 100%; display: block; }
 .lang {
   position: fixed; top: calc(10px + env(safe-area-inset-top)); right: 10px; z-index: 8;
   display: flex; padding: 3px; gap: 2px; border-radius: 999px;
-  background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.35); backdrop-filter: blur(6px);
+  background: rgba(11,26,68,.85); border: 1px solid rgba(255,255,255,.35); 
 }
 .lang button {
   border: 0; background: transparent; color: #fff; font: 600 12px var(--caps); letter-spacing: .08em;
@@ -271,3 +262,12 @@ html:lang(ja) .quote { font-size: 6cqw; font-style: normal; }
 html:lang(ja) .lead, html:lang(ja) .we { font-style: normal; }
 /* Indonesian lines are a bit longer */
 html:lang(id) .cover-title { font-size: 7.6cqw; }
+
+
+/* ---------- performance ---------- */
+/* Looping animations run only on the page that is open right now */
+.page:not(.on) .hint, .page:not(.on) .pulse, .page:not(.on) .fly b { animation-play-state: paused; }
+/* Low-end phones / reduce motion: keep the page turns, drop decorative loops */
+.lite .hint, .lite .pulse, .lite .fly b, .lite .music { animation: none; }
+.lite .fly b { left: calc(50% - 2.5cqw); }
+.lite .ticket, .lite .photo-frame, .lite .mini-pass { box-shadow: 0 1cqw 2.5cqw rgba(0,0,0,.35); }
